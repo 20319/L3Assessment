@@ -4,13 +4,15 @@ from tkinter import messagebox  # Import messagebox from tkinter
 
 # Define the submit_input function
 def submit_input():
-    # Check if all input fields are filled
-    if not all((entry_bedrooms.get(), entry_lounges.get(), entry_bathrooms.get(), 
-                entry_toilets.get(), entry_pools.get(), entry_sqm.get(), risk_var.get())):
-        messagebox.showerror("Error", "Please fill in all the input fields")
-    # Check if risk factor is selected
-    elif not risk_var.get():
-        messagebox.showerror("Error", "Please select a risk factor")
+    global invalid_inputs
+    invalid_inputs = 0  # Reset the count of invalid inputs for each submit
+    # Validate all input fields
+    if not all((validate_input(entry_bedrooms.get()), validate_input(entry_lounges.get()), validate_input(entry_bathrooms.get()), 
+                validate_input(entry_toilets.get()), validate_input(entry_pools.get()), validate_input(entry_sqm.get()), risk_var.get())):
+        messagebox.showerror("Error", "Please enter valid integer values for all input fields")
+    # If there are any invalid inputs, do not proceed
+    if invalid_inputs > 0:
+        return
     else:
         # Get the values entered by the user and convert them to integers
         bedrooms = int(entry_bedrooms.get())
@@ -48,7 +50,17 @@ def submit_input():
         total += gst
 
         # Display the total cost in the result label
-        result_label.config(text=f"Total Cost (including GST): {total}")
+        result_label.config(text=f"Total Cost (including GST): ${total:.2f}")
+
+# Function to validate if the input is an integer
+invalid_inputs = 0  # Track the number of invalid inputs
+def validate_input(entry):
+    global invalid_inputs
+    if entry.isdigit():
+        return True
+    else:
+        invalid_inputs += 1
+        return False
 
 # Create the main tkinter window
 window = tk.Tk()
@@ -56,17 +68,6 @@ window.title("McLeod's House Rental Company")  # Set the window title
 window.geometry("400x500")  # Set the window size
 window.configure(background='#bedafa')  # Set the window background color
 window.option_add('*Font', 'Georgia 10')
-
-# Load and display an image
-image_path = "path/to/your/image.png"  # Replace this with the actual path to your image
-img = tk.PhotoImage(file=image_path)  # Load the image using PhotoImage
-image_label = tk.Label(window, image=img, bg='#bedafa')
-image_label.pack()
-# Create labels and entry fields for input
-# Rest of your existing code for labels and entry fields goes here...
-
-# Run the tkinter main loop
-window.mainloop()
 
 # Create labels and entry fields for input
 label_bedrooms = tk.Label(window, text="Number of Bedrooms:", bg='#bedafa', fg='black')
