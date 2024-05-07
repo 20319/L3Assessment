@@ -4,8 +4,10 @@ from tkinter import messagebox  # Import messagebox from tkinter
 
 # Define the submit_input function
 def submit_input():
-    global invalid_inputs
+    global invalid_inputs, num_calculations
     invalid_inputs = 0  # Reset the count of invalid inputs for each submit
+    num_calculations += 1  # Increment the number of calculations
+    
     # Validate all input fields
     if not all((validate_input(entry_bedrooms.get()), validate_input(entry_lounges.get()), validate_input(entry_bathrooms.get()), 
                 validate_input(entry_toilets.get()), validate_input(entry_pools.get()), validate_input(entry_sqm.get()), risk_var.get())):
@@ -52,8 +54,12 @@ def submit_input():
         # Display the total cost in the result label
         result_label.config(text=f"Total Cost (including GST): ${total:.2f}")
 
+        # Display the number of calculations made
+        calculations_label.config(text=f"Number of Calculations: {num_calculations}")
+
 # Function to validate if the input is an integer
 invalid_inputs = 0  # Track the number of invalid inputs
+num_calculations = 0  # Track the number of calculations
 def validate_input(entry):
     global invalid_inputs
     if entry.isdigit():
@@ -142,6 +148,10 @@ def clear_input():
 # Create a button to clear all input fields
 clear_button = tk.Button(window, text="Clear", command=clear_input, bg='#3366cc', fg='white')
 clear_button.pack()
+
+# Create a label to display the number of calculations
+calculations_label = tk.Label(window, text="Number of Calculations: 0", bg='#bedafa', fg='black')
+calculations_label.pack()
 
 # Run the tkinter main loop
 window.mainloop()
