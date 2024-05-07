@@ -2,9 +2,14 @@
 import tkinter as tk  # Import tkinter module as tk
 from tkinter import messagebox  # Import messagebox from tkinter
 
+# Define global variables for tracking calculations
+num_calculations = 0
+total_cost = 0
+total_sqm = 0
+
 # Define the submit_input function
 def submit_input():
-    global invalid_inputs, num_calculations
+    global invalid_inputs, num_calculations, total_cost
     invalid_inputs = 0  # Reset the count of invalid inputs for each submit
     num_calculations += 1  # Increment the number of calculations
     
@@ -30,11 +35,13 @@ def submit_input():
 
         # Calculate cost based on square meters
         if sqm > 200:
-            sqm = sqm * 2.75
+            sqm_cost = sqm * 2.75
         elif sqm > 150:
-            sqm = sqm * 2
-
-        total += sqm
+            sqm_cost = sqm * 2
+        else:
+            sqm_cost = sqm
+            
+        total += sqm_cost
 
         # Calculate risk factor based on the selected option
         risk = risk_var.get()
@@ -50,9 +57,13 @@ def submit_input():
         # Calculate GST (Goods and Services Tax)
         gst = total * 0.15
         total += gst
-
+        
+        # Calculate the total cost/average cost
+        total_cost += total
+        average_cost = total_cost / num_calculations
+        
         # Display the total cost in the result label
-        result_label.config(text=f"Total Cost (including GST): ${total:.2f}")
+        result_label.config(text=f"Total Cost (including GST): ${total:.2f}  |  Average Cost: ${average_cost:.2f}")
 
         # Display the number of calculations made
         calculations_label.config(text=f"Number of Calculations: {num_calculations}")
