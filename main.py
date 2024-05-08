@@ -5,14 +5,14 @@ from tkinter import messagebox  # Import messagebox from tkinter
 # Define global variables for tracking calculations
 num_calculations = 0
 total_cost = 0
-total_sqm = 0
+total_sqm = 0  # New global variable for total square meters
 
 # Define the submit_input function
 def submit_input():
-    global invalid_inputs, num_calculations, total_cost
+    global invalid_inputs, num_calculations, total_cost, total_sqm  # Add total_sqm to global variables
     invalid_inputs = 0  # Reset the count of invalid inputs for each submit
     num_calculations += 1  # Increment the number of calculations
-    
+
     # Validate all input fields
     if not all((validate_input(entry_bedrooms.get()), validate_input(entry_lounges.get()), validate_input(entry_bathrooms.get()), 
                 validate_input(entry_toilets.get()), validate_input(entry_pools.get()), validate_input(entry_sqm.get()), risk_var.get())):
@@ -28,7 +28,7 @@ def submit_input():
         toilets = int(entry_toilets.get())
         pools = int(entry_pools.get())
         sqm = int(entry_sqm.get())
-        
+
         # Initialize the initial cost and calculate the total cost based on inputs
         initial_cost = 50
         total = initial_cost + (bedrooms * 50) + (lounges * 25) + (bathrooms * 50) + (toilets * 25) + (pools * 150)
@@ -40,7 +40,7 @@ def submit_input():
             sqm_cost = sqm * 2
         else:
             sqm_cost = sqm
-            
+
         total += sqm_cost
 
         # Calculate risk factor based on the selected option
@@ -57,13 +57,25 @@ def submit_input():
         # Calculate GST (Goods and Services Tax)
         gst = total * 0.15
         total += gst
-        
+
         # Calculate the total cost/average cost
         total_cost += total
         average_cost = total_cost / num_calculations
-        
+
+        # Update total square meters
+        total_sqm += sqm
+
+        # Calculate the average square meters
+        average_sqm = total_sqm / num_calculations
+
         # Display the total cost in the result label
-        result_label.config(text=f"Total Cost (including GST): ${total:.2f}  |  Average Cost: ${average_cost:.2f}")
+        result_label.config(text=f"Total Cost (including GST): ${total:.2f}")
+
+        # Display the average cost in the average result label
+        average_result_label.config(text=f"Average Cost: ${average_cost:.2f}")
+
+        # Display the average square meters in the sqm result label
+        sqm_result_label.config(text=f"Average Square Meters: {average_sqm:.2f}")
 
         # Display the number of calculations made
         calculations_label.config(text=f"Number of Calculations: {num_calculations}")
@@ -82,7 +94,7 @@ def validate_input(entry):
 # Create the main tkinter window
 window = tk.Tk()
 window.title("McLeod's House Rental Company")  # Set the window title
-window.geometry("400x500")  # Set the window size
+window.geometry("400x550")  # Set the window size
 window.configure(background='#bedafa')  # Set the window background color
 window.option_add('*Font', 'Georgia 10')
 
@@ -145,6 +157,14 @@ submit_button.pack()
 result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
 result_label.pack()
 
+# Create a label to display the average cost
+average_result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
+average_result_label.pack()
+
+# Create a label to display the average square meters
+sqm_result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
+sqm_result_label.pack()
+
 # Create a function to clear all input fields and reset radiobuttons
 def clear_input():
     entry_bedrooms.delete(0, tk.END)
@@ -154,6 +174,8 @@ def clear_input():
     entry_pools.delete(0, tk.END)
     entry_sqm.delete(0, tk.END)
     result_label.config(text="")
+    average_result_label.config(text="")
+    sqm_result_label.config(text="")
     risk_var.set(0)
 
 # Create a button to clear all input fields
