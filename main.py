@@ -3,7 +3,7 @@ from tkinter import messagebox  # Import the messagebox module from tkinter
 
 # Define global variables for tracking calculations
 num_calculations = 0  # Initialize a global variable to track the number of calculations
-total_cost = 0  # Initialize a global variable to track the total cost
+total_weekly_cost = 0  # Initialize a global variable to track the total cost
 total_sqm = 0  # Initialize a global variable to track the total square meters
 
 # Create the main tkinter window
@@ -25,7 +25,7 @@ def submit_input():
     """
     Function to handle the submission of input and calculate the total cost.
     """
-    global num_calculations, total_cost, total_sqm  # Access global variables
+    global num_calculations, total_weekly_cost, total_sqm, monthly_cost, yearly_cost  # Access global variables
 
     # Validate all input fields
     valid_inputs = [validate_input(entry.get()) for entry in (entry_bedrooms, entry_lounges, entry_bathrooms, entry_toilets, entry_pools, entry_sqm)]
@@ -51,7 +51,7 @@ def submit_input():
 
     # Initialize the initial cost and calculate the total cost based on inputs
     initial_cost = 50
-    total = initial_cost + (bedrooms * 50) + (lounges * 25) + (bathrooms * 50) + (toilets * 25) + (pools * 150)
+    weekly_cost = initial_cost + (bedrooms * 50) + (lounges * 25) + (bathrooms * 50) + (toilets * 25) + (pools * 150)
 
     # Calculate cost based on square meters
     if sqm > 200:
@@ -61,36 +61,48 @@ def submit_input():
     else:
         sqm_cost = sqm
 
-    total += sqm_cost
+    weekly_cost += sqm_cost
 
     # Calculate risk factor based on the selected option
     risk = risk_var.get()
     if risk == "3":
-        riskpercent = total * 0.04
+        riskpercent = weekly_cost * 0.04
     elif risk == "2":
-        riskpercent = total * 0.03
+        riskpercent = weekly_cost * 0.03
     else:
-        riskpercent = total * 0.02
+        riskpercent = weekly_cost * 0.02
 
-    total += riskpercent
+    weekly_cost += riskpercent
 
     # Calculate GST (Goods and Services Tax)
-    gst = total * 0.15
-    total += gst
+    gst = weekly_cost * 0.15
+    weekly_cost += gst
 
     # Calculate the total cost/average cost
-    total_cost += total
-    average_cost = total_cost / num_calculations
+    total_weekly_cost += weekly_cost
+    average_weekly_cost = total_weekly_cost / num_calculations
 
     # Update total square meters & Calculate average
     total_sqm += sqm
     average_sqm = total_sqm / num_calculations
 
+    # Calculate the total monthly cost
+    monthly_cost = weekly_cost * 4
+
+    # Calculate the total yearly cost
+    yearly_cost = monthly_cost * 12
+    
     # Display the total cost in the result label
-    result_label.config(text=f"Total Cost (including GST): ${total:.2f}")
+    weekly_result_label.config(text=f"Total Weekly Cost (including GST): ${weekly_cost:.2f}")
+
+    # Display the total cost in the result label
+    monthly_result_label.config(text=f"Total Monthly Cost (including GST): ${monthly_cost:.2f}")
+
+    # Display the total cost in the result label
+    yearly_result_label.config(text=f"Total Yearly Cost (including GST): ${yearly_cost:.2f}\n")
 
     # Display the average cost in the average result label
-    average_result_label.config(text=f"Average Cost: ${average_cost:.2f}")
+    average_result_label.config(text=f"Average Weekly Cost: ${average_weekly_cost:.2f}")
 
     # Display the average square meters in the sqm result label
     sqm_result_label.config(text=f"Average Square Meters: {average_sqm:.2f}")
@@ -169,9 +181,17 @@ for text, value in risk_options:
 submit_button = tk.Button(window, text="Calculate", command=submit_input, bg='#3366cc', fg='white')
 submit_button.pack()  # Place the submit button
 
-# Create a label to display the result
-result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
-result_label.pack()  # Place the label for result
+# Create a label to display the weekly result
+weekly_result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
+weekly_result_label.pack()  # Place the label for result
+
+# Create a label to display the monthly result
+monthly_result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
+monthly_result_label.pack()  # Place the label for result
+
+# Create a label to display the yearly result
+yearly_result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
+yearly_result_label.pack()  # Place the label for result
 
 # Create a label to display the average cost
 average_result_label = tk.Label(window, text="", bg='#bedafa', fg='black')
@@ -192,7 +212,9 @@ def clear_input():
     entry_toilets.delete(0, tk.END)  
     entry_pools.delete(0, tk.END)  
     entry_sqm.delete(0, tk.END)  
-    result_label.config(text="")  
+    weekly_result_label.config(text="")  
+    monthly_result_label.config(text="") 
+    yearly_result_label.config(text="") 
 
     # Reset the risk variable
     risk_var.set("")  # Reset risk_var to None
